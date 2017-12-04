@@ -103,7 +103,7 @@ module top(
       if (tx_state == PREPARE)
       begin
         cntr2 <= cntr2 + 1;
-        if (cntr2 == 4'd8)
+        if (cntr2 == 4'd3)// to speed up to 800KHz
         begin
           tx_data <= {2'b10, OUTPUT_I[12:0], 1'b1, 2'b01, OUTPUT_Q[12:0], 1'b0};
           tx_state <= TRANSMIT;
