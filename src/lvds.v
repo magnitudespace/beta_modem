@@ -59,6 +59,8 @@ module top(
 
   wire [12:0] OUTPUT_I;
   wire [12:0] OUTPUT_Q;
+  wire [12:0] sg_output_i;
+  wire [12:0] sg_output_q;
 
   wire read_enable, msg_done;
   reg transmit_d = 1'b0, transmit_dd;
@@ -152,7 +154,7 @@ module top(
   wire [9:0] ram_addr, o_addr;
   wire [7:0] ram_data, o_data;
   wire transmit, o_rd, o_wr;
-
+  wire reg_cw; // to chose if set maximum output on I and Q or real mesage
   signal_gen sg0(
     .clk(clk),
     .reset(rst),
@@ -161,9 +163,12 @@ module top(
     .read_enable(read_enable),
     .ram_addr(ram_addr),
     .ram_data(ram_data),
-    .OUTPUT_I(OUTPUT_I),
-    .OUTPUT_Q(OUTPUT_Q)
+    .OUTPUT_I(sg_output_i),
+    .OUTPUT_Q(sg_output_q)
   );
+   
+  assign OUTPUT_I = reg_cw ? 13'b0111111111111 : sg_output_i;
+  assign OUTPUT_Q = reg_cw ? 13'b0111111111111 : sg_output_q;
 /*
   SB_RAM1024x8 ram (
     .RDATA(ram_data),
@@ -205,7 +210,8 @@ module top(
     .o_ram_addr(o_addr),
     .o_ram_data(o_data),
     .o_msg_length(msg_length),
-    .o_transmit(transmit)
+    .o_transmit(transmit),
+    .o_reg_cw(reg_cw)
   );
 
 

@@ -9,6 +9,7 @@ module control(
   output o_miso,
   output o_rd,
   output o_wr,
+  output o_reg_cw,
   output [7:0] o_ram_data,
   output [9:0] o_ram_addr,
   output [9:0] o_msg_length,
@@ -23,6 +24,7 @@ module control(
   reg transmit = 1'b0;
   reg i_tx_done_d;
   reg [7:0] c_data;
+  reg reg_cw;
 
   assign is_ram = o_addr < 10'd1000;
 
@@ -31,7 +33,7 @@ module control(
     case (o_addr)
       10'd1020: c_data = 8'b10010110;
       10'd1021: c_data = 8'd0;
-      10'd1022: c_data = 8'd1;
+      10'd1022: c_data = 8'd2;
       default: c_data = 8'b0;
     endcase
   end
@@ -61,6 +63,7 @@ module control(
     begin
       msg_length <= 10'd0;
       transmit <= 1'b0;
+      reg_cw <= 1'b0;
     end
     else if (i_tx_done_d)
     begin
@@ -71,6 +74,7 @@ module control(
       case (o_addr)
         10'd1000: msg_length[9:8] <= o_data[1:0];
         10'd1001: msg_length[7:0] <= o_data;
+        10'd1019: reg_cw   <= o_data[0];
         10'd1023: transmit <= o_data[0];
       endcase
     end
@@ -97,5 +101,6 @@ module control(
   assign o_ram_data = o_data;
   assign o_transmit = transmit;
   assign o_msg_length = msg_length;
+  assign o_reg_cw = reg_cw;
 
 endmodule
