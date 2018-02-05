@@ -257,7 +257,7 @@ module top(
 //  assign led8 = ~blink;
   assign GPIO1 = 1;
   assign GPIO2 = 1;
-  assign GPIO3 = 0;
+  assign GPIO3 = transmit;
   assign GPIO4 = ~blink;
 
 endmodule
