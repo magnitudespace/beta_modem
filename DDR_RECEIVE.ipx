@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiamondModule name="DDR_RECEIVE" module="DDR_GENERIC" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2018 12 31 12:53:06.711" version="6.0" type="Module" synthesis="lse" source_format="Verilog">
+  <Package>
+		<File name="DDR_RECEIVE.lpc" type="lpc" modified="2018 12 31 12:53:05.000"/>
+		<File name="DDR_RECEIVE.v" type="top_level_verilog" modified="2018 12 31 12:53:05.000"/>
+		<File name="DDR_RECEIVE_tmpl.v" type="template_verilog" modified="2018 12 31 12:53:05.000"/>
+  </Package>
+</DiamondModule>

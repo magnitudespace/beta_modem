@@ -1,0 +1,158 @@
+<HTML>
+<HEAD><TITLE>Lattice TCL Log</TITLE>
+<STYLE TYPE="text/css">
+<!--
+ body,pre{    font-family:'Courier New', monospace;    color: #000000;    font-size:88%;    background-color: #ffffff;}h1 {    font-weight: bold;    margin-top: 24px;    margin-bottom: 10px;    border-bottom: 3px solid #000;    font-size: 1em;}h2 {    font-weight: bold;    margin-top: 18px;    margin-bottom: 5px;    font-size: 0.90em;}h3 {    font-weight: bold;    margin-top: 12px;    margin-bottom: 5px;    font-size: 0.80em;}p {    font-size:78%;}P.Table {    margin-top: 4px;    margin-bottom: 4px;    margin-right: 4px;    margin-left: 4px;}table{    border-width: 1px 1px 1px 1px;    border-style: solid solid solid solid;    border-color: black black black black;    border-collapse: collapse;}th {    font-weight:bold;    padding: 4px;    border-width: 1px 1px 1px 1px;    border-style: solid solid solid solid;    border-color: black black black black;    vertical-align:top;    text-align:left;    font-size:78%;}td {    padding: 4px;    border-width: 1px 1px 1px 1px;    border-style: solid solid solid solid;    border-color: black black black black;    vertical-align:top;    font-size:78%;}a {    color:#013C9A;    text-decoration:none;}a:visited {    color:#013C9A;}a:hover, a:active {    text-decoration:underline;    color:#5BAFD4;}.pass{background-color: #00ff00;}.fail{background-color: #ff0000;}.comment{    font-size: 90%;    font-style: italic;}
+-->
+</STYLE>
+</HEAD>
+<PRE><A name="pn171205143014"></A><B><U><big>pn171205143014</big></U></B>
+#Start recording tcl command: 12/4/2017 15:14:23
+#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
+prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+prj_src add "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
+prj_src exclude "C:/NVProjects/latticeproj/beta_modem/src/filter.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_src exclude "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
+prj_src enable "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Synthesis -impl impl1 -task Lattice_Synthesis
+prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/PLL_64/PLL_64MHz.v"
+prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/RAM_1024x8/DP_RAM1024x8.v"
+prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/DDR_OUTPUT/DDR_TRANSMIT.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_src add -exclude "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_src enable "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_run Export -impl impl1 -task Jedecgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_run Export -impl impl1 -task Jedecgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_project save
+prj_project close
+#Stop recording: 12/5/2017 14:30:14
+
+
+
+<A name="pn171207122320"></A><B><U><big>pn171207122320</big></U></B>
+#Start recording tcl command: 12/7/2017 12:03:27
+#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
+prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
+pgr_project open "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_project close
+#Stop recording: 12/7/2017 12:23:20
+
+
+
+<A name="pn171211150039"></A><B><U><big>pn171211150039</big></U></B>
+#Start recording tcl command: 12/11/2017 14:00:57
+#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
+prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
+pgr_project close
+prj_run Export -impl impl1 -task Bitgen
+pgr_project open "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_project close
+#Stop recording: 12/11/2017 15:00:39
+
+
+
+<A name="pn171211164941"></A><B><U><big>pn171211164941</big></U></B>
+#Start recording tcl command: 12/11/2017 16:09:55
+#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
+prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
+prj_run Export -impl impl1 -task Jedecgen
+pgr_project open "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_project close
+#Stop recording: 12/11/2017 16:49:41
+
+
+
+<A name="pn180206142531"></A><B><U><big>pn180206142531</big></U></B>
+#Start recording tcl command: 2/6/2018 14:21:19
+#Project Location: /home/jens/Downloads/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/Downloads/beta_modem/beta_modem.ldf"
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 2/6/2018 14:25:31
+
+
+
+<A name="pn180720151059"></A><B><U><big>pn180720151059</big></U></B>
+#Start recording tcl command: 7/20/2018 14:47:08
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+#Stop recording: 7/20/2018 15:10:59
+
+
+
+<A name="pn180724132556"></A><B><U><big>pn180724132556</big></U></B>
+#Start recording tcl command: 7/24/2018 12:23:20
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+#Stop recording: 7/24/2018 13:25:56
+
+
+
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</PRE></FONT>
+</BODY>
+</HTML>

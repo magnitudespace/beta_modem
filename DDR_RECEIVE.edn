@@ -1,0 +1,120 @@
+(edif DDR_RECEIVE
+  (edifVersion 2 0 0)
+  (edifLevel 0)
+  (keywordMap (keywordLevel 0))
+  (status
+    (written
+      (timestamp 2018 12 31 12 53 5)
+      (program "SCUBA" (version "Diamond (64-bit) 3.9.0.99.2"))))
+      (comment "/usr/local/diamond/3.9_x64/ispfpga/bin/lin64/scuba -w -n DDR_RECEIVE -lang verilog -synth lse -bus_exp 7 -bb -arch xo3c00a -type iol -mode in -io_type LVDS25 -width 1 -freq_in 64 -gear 1 -clk sclk -del 32 ")
+  (library ORCLIB
+    (edifLevel 0)
+    (technology
+      (numberDefinition))
+    (cell IB
+      (cellType GENERIC)
+      (view view1
+        (viewType NETLIST)
+        (interface
+          (port I
+            (direction INPUT))
+          (port O
+            (direction OUTPUT)))))
+    (cell IDDRXE
+      (cellType GENERIC)
+      (view view1
+        (viewType NETLIST)
+        (interface
+          (port D
+            (direction INPUT))
+          (port SCLK
+            (direction INPUT))
+          (port RST
+            (direction INPUT))
+          (port Q0
+            (direction OUTPUT))
+          (port Q1
+            (direction OUTPUT)))))
+    (cell DELAYE
+      (cellType GENERIC)
+      (view view1
+        (viewType NETLIST)
+        (interface
+          (port A
+            (direction INPUT))
+          (port Z
+            (direction OUTPUT)))))
+    (cell DDR_RECEIVE
+      (cellType GENERIC)
+      (view view1
+        (viewType NETLIST)
+        (interface
+          (port clk
+            (direction INPUT))
+          (port reset
+            (direction INPUT))
+          (port sclk
+            (direction OUTPUT))
+          (port (array (rename datain "datain(0:0)") 1)
+            (direction INPUT))
+          (port (array (rename q "q(1:0)") 2)
+            (direction OUTPUT)))
+        (property NGD_DRC_MASK (integer 1))
+        (contents
+          (instance Inst3_IDDRXE0
+            (viewRef view1 
+              (cellRef IDDRXE)))
+          (instance udel_dataini0
+            (viewRef view1 
+              (cellRef DELAYE))
+            (property DEL_VALUE
+              (string "DELAY0"))
+            (property DEL_MODE
+              (string "SCLK_CENTERED")))
+          (instance Inst2_IB
+            (viewRef view1 
+              (cellRef IB))
+            (property IO_TYPE
+              (string "LVDS25")))
+          (instance Inst1_IB0
+            (viewRef view1 
+              (cellRef IB))
+            (property IO_TYPE
+              (string "LVDS25")))
+          (net dataini_t0
+            (joined
+              (portRef Z (instanceRef udel_dataini0))
+              (portRef D (instanceRef Inst3_IDDRXE0))))
+          (net buf_dataini0
+            (joined
+              (portRef O (instanceRef Inst1_IB0))
+              (portRef A (instanceRef udel_dataini0))))
+          (net q1
+            (joined
+              (portRef (member q 0))
+              (portRef Q1 (instanceRef Inst3_IDDRXE0))))
+          (net q0
+            (joined
+              (portRef (member q 1))
+              (portRef Q0 (instanceRef Inst3_IDDRXE0))))
+          (net datain0
+            (joined
+              (portRef (member datain 0))
+              (portRef I (instanceRef Inst1_IB0))))
+          (net sclk
+            (joined
+              (portRef sclk)
+              (portRef SCLK (instanceRef Inst3_IDDRXE0))
+              (portRef O (instanceRef Inst2_IB))))
+          (net reset
+            (joined
+              (portRef reset)
+              (portRef RST (instanceRef Inst3_IDDRXE0))))
+          (net clk
+            (joined
+              (portRef clk)
+              (portRef I (instanceRef Inst2_IB))))))))
+  (design DDR_RECEIVE
+    (cellRef DDR_RECEIVE
+      (libraryRef ORCLIB)))
+)

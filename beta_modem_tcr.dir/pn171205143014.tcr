@@ -1,0 +1,35 @@
+#Start recording tcl command: 12/4/2017 15:14:23
+#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
+prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+prj_src add "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
+prj_src exclude "C:/NVProjects/latticeproj/beta_modem/src/filter.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_src exclude "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
+prj_src enable "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Synthesis -impl impl1 -task Lattice_Synthesis
+prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/PLL_64/PLL_64MHz.v"
+prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/RAM_1024x8/DP_RAM1024x8.v"
+prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/DDR_OUTPUT/DDR_TRANSMIT.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_src add -exclude "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_src enable "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_run Export -impl impl1 -task Jedecgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_run Export -impl impl1 -task Jedecgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Jedecgen
+pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_project save
+prj_project close
+#Stop recording: 12/5/2017 14:30:14

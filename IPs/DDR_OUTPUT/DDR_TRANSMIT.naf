@@ -1,0 +1,7 @@
+clk  i
+clkout  o
+reset  i
+sclk  o
+dataout[1]  i
+dataout[0]  i
+dout[0]  o

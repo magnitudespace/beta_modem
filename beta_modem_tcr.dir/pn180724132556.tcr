@@ -1,0 +1,4 @@
+#Start recording tcl command: 7/24/2018 12:23:20
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+#Stop recording: 7/24/2018 13:25:56

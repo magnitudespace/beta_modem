@@ -1,0 +1,28 @@
+SCUBA, Version Diamond (64-bit) 3.9.0.99.2
+Mon Dec 31 16:48:11 2018
+
+Copyright (c) 1991-1994 by NeoCAD Inc. All rights reserved.
+Copyright (c) 1995 AT&T Corp.   All rights reserved.
+Copyright (c) 1995-2001 Lucent Technologies Inc.  All rights reserved.
+Copyright (c) 2001 Agere Systems   All rights reserved.
+Copyright (c) 2002-2017 Lattice Semiconductor Corporation,  All rights reserved.
+
+    Issued command   : /usr/local/diamond/3.9_x64/ispfpga/bin/lin64/scuba -w -n data_fifo -lang verilog -synth lse -bus_exp 7 -bb -arch xo3c00a -type ebfifo -depth 512 -width 32 -rwidth 32 -no_enable -pe 64 -pf 508 
+    Circuit name     : data_fifo
+    Module type      : ebfifo
+    Module Version   : 5.8
+    Ports            : 
+	Inputs       : Data[31:0], WrClock, RdClock, WrEn, RdEn, Reset, RPReset
+	Outputs      : Q[31:0], Empty, Full, AlmostEmpty, AlmostFull
+    I/O buffer       : not inserted
+    EDIF output      : data_fifo.edn
+    Verilog output   : data_fifo.v
+    Verilog template : data_fifo_tmpl.v
+    Verilog testbench: tb_data_fifo_tmpl.v
+    Verilog purpose  : for synthesis and simulation
+    Bus notation     : big endian
+    Report output    : data_fifo.srp
+    Element Usage    :
+        FIFO8KB : 2
+    Estimated Resource Usage:
+            EBR : 2

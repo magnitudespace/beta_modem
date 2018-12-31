@@ -1,0 +1,27 @@
+SCUBA, Version Diamond (64-bit) 3.9.0.99.2
+Fri Jun 02 13:37:24 2017
+
+Copyright (c) 1991-1994 by NeoCAD Inc. All rights reserved.
+Copyright (c) 1995 AT&T Corp.   All rights reserved.
+Copyright (c) 1995-2001 Lucent Technologies Inc.  All rights reserved.
+Copyright (c) 2001 Agere Systems   All rights reserved.
+Copyright (c) 2002-2017 Lattice Semiconductor Corporation,  All rights reserved.
+
+    Issued command   : C:\lscc\diamond\3.9_x64\ispfpga\bin\nt64\scuba.exe -w -n DDR_TRANSMIT -lang verilog -synth lse -bus_exp 7 -bb -arch xo3c00f -type iol -mode out -io_type LVDS25 -width 1 -freq_in 64 -gear 1 -clk sclk -aligned -del -1 
+    Circuit name     : DDR_TRANSMIT
+    Module type      : iol
+    Module Version   : 5.8
+    Ports            : 
+	Inputs       : clk, reset, dataout[1:0]
+	Outputs      : clkout, sclk, dout[0:0]
+    I/O buffer       : not inserted
+    EDIF output      : DDR_TRANSMIT.edn
+    Verilog output   : DDR_TRANSMIT.v
+    Verilog template : DDR_TRANSMIT_tmpl.v
+    Verilog purpose  : for synthesis and simulation
+    Bus notation     : big endian
+    Report output    : DDR_TRANSMIT.srp
+    Element Usage    :
+             OB : 2
+         ODDRXE : 2
+    Estimated Resource Usage:

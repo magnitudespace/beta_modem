@@ -1,0 +1,6 @@
+#Start recording tcl command: 12/7/2017 12:03:27
+#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
+prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
+pgr_project open "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
+prj_project close
+#Stop recording: 12/7/2017 12:23:20

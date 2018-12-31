@@ -4,6 +4,8 @@ module top(
   input cs,
   input mosi,
   input spi_clk_in,
+  input rx_in,
+  input rx_clk,
   output miso,
   output GPIO1,
   output GPIO2,
@@ -216,18 +218,6 @@ module top(
 
 
   wire spi_miso;
-
-/*
-  SB_IO #(
-      .PIN_TYPE(6'b 1010_01),
-      .PULLUP(1'b0)
-  ) io_block_instance (
-      .PACKAGE_PIN(miso),
-      .OUTPUT_ENABLE(~cs),
-      .D_OUT_0(spi_miso),
-      .D_IN_0(din)
-  );*/
-
   wire rst;
   
   assign miso = ~cs ? spi_miso : 'bz;
@@ -237,27 +227,48 @@ module top(
   reg [31:0] cntr3 = 0;
   reg blink = 0;
 
-  always @(posedge clk64mhz)
+  wire [1:0] s_rx_d;
+  wire s_rx_ck, sync;
+
+  DDR_RECEIVE ddr_recv(rx_clk, ~reset_n, s_rx_ck, rx_in, s_rx_d);
+
+  reg [31:0] rx_data;
+  reg [31:0] output_data;
+  reg [3:0] sync_cnt;
+  reg valid;
+
+  assign sync = (rx_data[31:30] == 2'b10) && (rx_data[15:14] == 2'b01);
+  assign all_zero = (rx_data[31:0] == 32'b0);
+
+  always @(posedge s_rx_ck)
+	rx_data <= {rx_data[29:0], s_rx_d[0], s_rx_d[1]};
+
+  always @(posedge s_rx_ck)
   begin
-	  cntr3 <= cntr3 + 1;
-	  if (cntr3 == 32'd32000000)
-      begin
-		  cntr3 <= 0;
-		  blink <= ~blink;
-      end
+	sync_cnt <= sync_cnt + 1'd1;
+	valid <= 1'b0;
+	if (all_zero)
+	  sync_cnt <= 4'd0;
+	else if (sync_cnt == 4'd15 && sync)
+	begin
+	  valid <= 1'b1;
+	end
   end
 
-//  assign led1 = ~lock;
-//  assign led2 = ~tx_state[0];
-//  assign led3 = ~tx_state[1];
-//  assign led4 = ~transmit;
-//  assign led5 = ~o_addr[0];
-//  assign led6 = ~o_addr[1];
-//  assign led7 = ~o_addr[2];
-//  assign led8 = ~blink;
+  always @(posedge s_rx_ck)
+    if (valid)
+    begin
+	  cntr3 <= cntr3 + 32'b1;
+	  if (cntr3 == 32'd400000)
+	  begin
+		blink <= ~blink;
+		cntr3 <= 32'd0;
+	  end
+	end
+
   assign GPIO1 = 1;
   assign GPIO2 = 1;
   assign GPIO3 = transmit;
-  assign GPIO4 = ~blink;
+  assign GPIO4 = blink;
 
 endmodule

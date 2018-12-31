@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.2" title="beta_modem" device="LCMXO3L-4300E-5UWG81CTR" default_implementation="impl1">
+    <Options/>
+    <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
+        <Options def_top="top"/>
+        <Source name="src/control.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="src/filter.v" type="Verilog" type_short="Verilog" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="src/generator.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="src/lvds.v" type="Verilog" type_short="Verilog">
+            <Options top_module="top"/>
+        </Source>
+        <Source name="src/lvds_trx.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="src/preamble.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="src/scrambler.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="src/shiftreg.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="src/signal_gen.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="src/spi_slave_top.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="src/filter8.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="IPs/PLL_64/PLL_64MHz.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="IPs/RAM_1024x8/DP_RAM1024x8.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="IPs/DDR_OUTPUT/DDR_TRANSMIT.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="beta_modem.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+        <Source name="impl1/impl1.xcf" type="Programming Project File" type_short="Programming">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="Strategy1" file="beta_modem1.sty"/>
+</BaliProject>
