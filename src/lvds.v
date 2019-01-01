@@ -258,39 +258,36 @@ module top(
 	end
   end
 
-  always @(posedge s_rx_ck)
-    if (valid)
-    begin
-	  cntr3 <= cntr3 + 32'b1;
-	  if (cntr3 == 32'd400000)
-	  begin
-		blink <= ~blink;
-		cntr3 <= 32'd0;
-	  end
-	end
-
   wire [31:0] fifo_out;
   wire fifo_almost_empty;
   
-  reg fifo_read;
+  wire fifo_read;
+  assign fifo_read = o_rd && o_addr[1:0] == 2'd3;
   
   always @(posedge clk64mhz)
   begin
-	fifo_read <= o_rd && o_addr[1:0] == 2'd3;
 	ram_data <= (o_addr[1:0] == 2'd0) ? fifo_out[31:24] : (
 		(o_addr[1:0] == 2'd1) ? fifo_out[23:16] : (
 		(o_addr[1:0] == 2'd2) ? fifo_out[15:8] : fifo_out[7:0]));
   end
 
   reg fifo_write;
-  reg [1:0] valid_cntr;
+  reg [3:0] valid_cntr;
 
   always @(posedge s_rx_ck)
   begin
-	fifo_write <= valid_cntr == 2'd0 && valid; 
+	fifo_write <= valid_cntr == 4'd0 && valid; 
 	if (valid)
-	  valid_cntr <= valid_cntr + 2'd1;
+	  valid_cntr <= valid_cntr + 4'd1;
   end
+
+/*
+  always @(posedge s_rx_ck)
+    if (fifo_write)
+    begin
+	  cntr3 <= cntr3 + 32'b1;
+	end
+*/
 
   data_fifo df(
 	.Data(valid_data),
