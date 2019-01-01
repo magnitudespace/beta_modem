@@ -154,7 +154,7 @@ module top(
   );
 
   wire [9:0] ram_addr, o_addr;
-  wire [7:0] ram_data, o_data;
+  reg [7:0] ram_data;
   wire transmit, o_rd, o_wr;
   wire reg_cw; // to chose if set maximum output on I and Q or real mesage
   signal_gen sg0(
@@ -164,7 +164,7 @@ module top(
     .done(msg_done),
     .read_enable(read_enable),
     .ram_addr(ram_addr),
-    .ram_data(ram_data),
+    // .ram_data(ram_data),
     .OUTPUT_I(sg_output_i),
     .OUTPUT_Q(sg_output_q)
   );
@@ -185,6 +185,7 @@ module top(
     .MASK(8'b00000000),
     .WDATA(o_data)
   );*/
+ /*
   DP_RAM1024x8 sb_ram_1024x8_u1 ( 
         .Reset(~reset_n),
         .Q(ram_data), 
@@ -197,9 +198,10 @@ module top(
         .WrAddress(o_addr),
         .Data(o_data) 
             );
+*/
 
   control ctrl(
-    .clk(hwclk),
+    .clk(clk64mhz),
     .reset(~reset_n),
     .i_mosi(mosi),
     .i_ssn(cs),
@@ -210,7 +212,7 @@ module top(
     .i_tx_done(msg_done_d),
     .i_ram_data(ram_data),
     .o_ram_addr(o_addr),
-    .o_ram_data(o_data),
+    // .o_ram_data(o_data),
     .o_msg_length(msg_length),
     .o_transmit(transmit),
     .o_reg_cw(reg_cw)
@@ -233,7 +235,7 @@ module top(
   DDR_RECEIVE ddr_recv(rx_clk, ~reset_n, s_rx_ck, rx_in, s_rx_d);
 
   reg [31:0] rx_data;
-  reg [31:0] output_data;
+  reg [31:0] valid_data;
   reg [3:0] sync_cnt;
   reg valid;
 
@@ -252,6 +254,7 @@ module top(
 	else if (sync_cnt == 4'd15 && sync)
 	begin
 	  valid <= 1'b1;
+	  valid_data <= rx_data;
 	end
   end
 
@@ -266,9 +269,43 @@ module top(
 	  end
 	end
 
+  wire [31:0] fifo_out;
+  wire fifo_almost_empty;
+  
+  reg fifo_read;
+  
+  always @(posedge clk64mhz)
+  begin
+	fifo_read <= o_rd && o_addr[1:0] == 2'd3;
+	ram_data <= (o_addr[1:0] == 2'd0) ? fifo_out[31:24] : (
+		(o_addr[1:0] == 2'd1) ? fifo_out[23:16] : (
+		(o_addr[1:0] == 2'd2) ? fifo_out[15:8] : fifo_out[7:0]));
+  end
+
+  reg fifo_write;
+  reg [1:0] valid_cntr;
+
+  always @(posedge s_rx_ck)
+  begin
+	fifo_write <= valid_cntr == 2'd0 && valid; 
+	if (valid)
+	  valid_cntr <= valid_cntr + 2'd1;
+  end
+
+  data_fifo df(
+	.Data(valid_data),
+	.WrClock(s_rx_ck),
+	.RdClock(clk64mhz),
+	.WrEn(fifo_write),
+	.RdEn(fifo_read),
+	.Reset(~reset_n),
+	.RPReset(~reset_n),
+	.Q(fifo_out),
+	.AlmostEmpty(fifo_almost_empty));
+
   assign GPIO1 = 1;
   assign GPIO2 = 1;
   assign GPIO3 = transmit;
-  assign GPIO4 = blink;
+  assign GPIO4 = ~fifo_almost_empty;
 
 endmodule
