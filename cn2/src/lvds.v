@@ -6,15 +6,15 @@ module top(
   input spi_clk_in,
   input rx_in,
   input rx_clk,
-  output miso,
-  output [3:0] GPIOs,
+  output miso
+  // output [3:0] GPIOs,
 //  output led5,
 //  output led6,
 //  output led7,
 //  output led8,
-  output tx_a,
+  //output tx_a,
   //output tx_b,
-  output clk_a
+  //output clk_a
   //output clk_b
 );
 
@@ -60,6 +60,7 @@ module top(
   wire [12:0] OUTPUT_Q;
   wire [12:0] sg_output_i;
   wire [12:0] sg_output_q;
+  wire [3:0] GPIOs;
 
   wire read_enable, msg_done;
   reg transmit_d = 1'b0, transmit_dd;
@@ -140,12 +141,12 @@ module top(
 
   lvds_trx trx(
     .tx_data(tx_data),
-    .enable(1'b1),
+    .enable(1'b0),
     .clk64mhz(clk64mhz),
     .tx_done (tx_done),
-    .tx_a(tx_a),
+    //.tx_a(tx_a),
     //.tx_b(tx_b),
-    .clk_a(clk_a),
+    //.clk_a(clk_a),
     //.clk_b(clk_b),
     .slowclk(clk)
   );
@@ -270,7 +271,7 @@ module top(
   end
 
   reg fifo_write;
-  reg [3:0] valid_cntr;
+  reg [2:0] valid_cntr;
 
   always @(posedge s_rx_ck)
   begin
