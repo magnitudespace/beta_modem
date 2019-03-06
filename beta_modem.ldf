@@ -33,7 +33,7 @@
         <Source name="src/spi_slave_top.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="src/filter8.v" type="Verilog" type_short="Verilog">
+        <Source name="src/filter8.v" type="Verilog" type_short="Verilog" excluded="TRUE">
             <Options/>
         </Source>
         <Source name="IPs/PLL_64/PLL_64MHz.v" type="Verilog" type_short="Verilog">
@@ -43,6 +43,9 @@
             <Options/>
         </Source>
         <Source name="IPs/DDR_OUTPUT/DDR_TRANSMIT.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="filter16.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
         <Source name="beta_modem.lpf" type="Logic Preference" type_short="LPF">

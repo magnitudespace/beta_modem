@@ -34,7 +34,7 @@ module control(
     case (o_addr)
       10'd1020: c_data = 8'b10010110;
       10'd1021: c_data = 8'd0;
-      10'd1022: c_data = 8'd4;
+      10'd1022: c_data = 8'd5;
       default: c_data = 8'b0;
     endcase
   end

@@ -42,3 +42,9 @@ reportview.xml
 IPs/DDR_OUTPUT/DDR_TRANSMIT_generate.log
 IPs/RAM_1024x8/DP_RAM1024x8_generate.log
 impl1/
+cn2/data_fifo.*
+beta_modem_tcr.dir/*
+cn2/cn2_alpha.ccl
+cn2/cn2_alpha_tcr.dir/
+cn2/cn2_alpha.ldf
+cn2/beta_modem1.sty

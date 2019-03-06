@@ -24,7 +24,7 @@ module top(
 
   wire clk64mhz;
   wire pll_outg;
-  wire lock;
+  //wire lock;
   wire clk;
 //  wire hwclk;
 //defparam OSCH_inst.NOM_FREQ = "12.09";  
@@ -38,9 +38,9 @@ module top(
   //CLKI, RST, CLKOP, LOCK
   PLL_64MHz pll_u1 (
     //.BYPASS(1'b0),
-    .RST(~reset_n),
+    //.RST(~reset_n),
     .CLKI(hwclk),
-    .LOCK(lock),
+    //.LOCK(lock),
     .CLKOP(clk64mhz)
   );
 
@@ -271,13 +271,13 @@ module top(
   end
 
   reg fifo_write;
-  reg [2:0] valid_cntr;
+  reg [1:0] valid_cntr;
 
   always @(posedge s_rx_ck)
   begin
-	fifo_write <= valid_cntr == 4'd0 && valid; 
+	fifo_write <= valid_cntr == 2'd0 && valid; 
 	if (valid)
-	  valid_cntr <= valid_cntr + 4'd1;
+	  valid_cntr <= valid_cntr + 2'd1;
   end
 
 /*

@@ -19,7 +19,7 @@ module signal_gen(
   wire data_valid, eof;
 
   reg [3:0] state;
-  reg [3:0] filter_stage = 4'b0000;//one bit more for 8 t over sampling
+  reg [4:0] filter_stage = 5'b0000;//one bit more for 8 t over sampling
   reg filter_enable = 0;
 
   parameter INITIAL = 4'd0;
@@ -83,7 +83,7 @@ module signal_gen(
       end
       if (state == TRANSMIT && enable)
       begin
-        if (filter_stage != 4'b1111)//one bit more for 8 t over sampling
+        if (filter_stage != 5'b11111)
         begin
           filter_stage <= filter_stage + 1;
           state <= FILTER_I;
@@ -123,7 +123,7 @@ module signal_gen(
     .RDATA_Q(RDATA1)
   );
 
-  filter8 f1(
+  filter16 f1(
     .CLK(clk),
     .ENABLE(filter_enable),
     .STAGE(filter_stage),

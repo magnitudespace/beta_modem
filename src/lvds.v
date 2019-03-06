@@ -4,10 +4,11 @@ module top(
   input cs,
   input mosi,
   input spi_clk_in,
-  input rx_in,
-  input rx_clk,
   output miso,
-  output [3:0] GPIOs,
+  output GPIO1,
+  output GPIO2,
+  output GPIO3,
+  output GPIO4,
 //  output led5,
 //  output led6,
 //  output led7,
@@ -104,7 +105,7 @@ module top(
       if (tx_state == PREPARE)
       begin
         cntr2 <= cntr2 + 1;
-        if (cntr2 == 4'd3)// to speed up to 800KHz
+        if (cntr2 == 4'd7)
         begin
           tx_data <= {2'b10, OUTPUT_I[12:0], 1'b1, 2'b01, OUTPUT_Q[12:0], 1'b0};
           tx_state <= TRANSMIT;
@@ -151,7 +152,7 @@ module top(
   );
 
   wire [9:0] ram_addr, o_addr;
-  reg [7:0] ram_data;
+  wire [7:0] ram_data, o_data;
   wire transmit, o_rd, o_wr;
   wire reg_cw; // to chose if set maximum output on I and Q or real mesage
   signal_gen sg0(
@@ -161,7 +162,7 @@ module top(
     .done(msg_done),
     .read_enable(read_enable),
     .ram_addr(ram_addr),
-    // .ram_data(ram_data),
+    .ram_data(ram_data),
     .OUTPUT_I(sg_output_i),
     .OUTPUT_Q(sg_output_q)
   );
@@ -182,7 +183,6 @@ module top(
     .MASK(8'b00000000),
     .WDATA(o_data)
   );*/
- /*
   DP_RAM1024x8 sb_ram_1024x8_u1 ( 
         .Reset(~reset_n),
         .Q(ram_data), 
@@ -195,22 +195,20 @@ module top(
         .WrAddress(o_addr),
         .Data(o_data) 
             );
-*/
 
   control ctrl(
-    .clk(clk64mhz),
+    .clk(hwclk),
     .reset(~reset_n),
     .i_mosi(mosi),
     .i_ssn(cs),
     .i_sclk(spi_clk_in),
-	.i_gpios(GPIOs),
     .o_miso(spi_miso),
     .o_rd(o_rd),
     .o_wr(o_wr),
     .i_tx_done(msg_done_d),
     .i_ram_data(ram_data),
     .o_ram_addr(o_addr),
-    // .o_ram_data(o_data),
+    .o_ram_data(o_data),
     .o_msg_length(msg_length),
     .o_transmit(transmit),
     .o_reg_cw(reg_cw)
@@ -218,6 +216,18 @@ module top(
 
 
   wire spi_miso;
+
+/*
+  SB_IO #(
+      .PIN_TYPE(6'b 1010_01),
+      .PULLUP(1'b0)
+  ) io_block_instance (
+      .PACKAGE_PIN(miso),
+      .OUTPUT_ENABLE(~cs),
+      .D_OUT_0(spi_miso),
+      .D_IN_0(din)
+  );*/
+
   wire rst;
   
   assign miso = ~cs ? spi_miso : 'bz;
@@ -227,77 +237,27 @@ module top(
   reg [31:0] cntr3 = 0;
   reg blink = 0;
 
-  wire [1:0] s_rx_d;
-  wire s_rx_ck, sync;
-
-  DDR_RECEIVE ddr_recv(rx_clk, ~reset_n, s_rx_ck, rx_in, s_rx_d);
-
-  reg [31:0] rx_data;
-  reg [31:0] valid_data;
-  reg [3:0] sync_cnt;
-  reg valid;
-
-  assign sync = (rx_data[31:30] == 2'b10) && (rx_data[15:14] == 2'b01);
-  assign all_zero = (rx_data[31:0] == 32'b0);
-
-  always @(posedge s_rx_ck)
-	rx_data <= {rx_data[29:0], s_rx_d[0], s_rx_d[1]};
-
-  always @(posedge s_rx_ck)
-  begin
-	sync_cnt <= sync_cnt + 1'd1;
-	valid <= 1'b0;
-	if (all_zero)
-	  sync_cnt <= 4'd0;
-	else if (sync_cnt == 4'd15 && sync)
-	begin
-	  valid <= 1'b1;
-	  valid_data <= rx_data;
-	end
-  end
-
-  wire [31:0] fifo_out;
-  wire fifo_almost_empty;
-  
-  wire fifo_read;
-  assign fifo_read = o_rd && o_addr[1:0] == 2'd3;
-  
   always @(posedge clk64mhz)
   begin
-	ram_data <= (o_addr[1:0] == 2'd0) ? fifo_out[31:24] : (
-		(o_addr[1:0] == 2'd1) ? fifo_out[23:16] : (
-		(o_addr[1:0] == 2'd2) ? fifo_out[15:8] : fifo_out[7:0]));
+	  cntr3 <= cntr3 + 1;
+	  if (cntr3 == 32'd32000000)
+      begin
+		  cntr3 <= 0;
+		  blink <= ~blink;
+      end
   end
 
-  reg fifo_write;
-  reg [3:0] valid_cntr;
-
-  always @(posedge s_rx_ck)
-  begin
-	fifo_write <= valid_cntr == 4'd0 && valid; 
-	if (valid)
-	  valid_cntr <= valid_cntr + 4'd1;
-  end
-
-/*
-  always @(posedge s_rx_ck)
-    if (fifo_write)
-    begin
-	  cntr3 <= cntr3 + 32'b1;
-	end
-*/
-
-  data_fifo df(
-	.Data(valid_data),
-	.WrClock(s_rx_ck),
-	.RdClock(clk64mhz),
-	.WrEn(fifo_write),
-	.RdEn(fifo_read),
-	.Reset(~reset_n),
-	.RPReset(~reset_n),
-	.Q(fifo_out),
-	.AlmostEmpty(fifo_almost_empty));
-
-  assign GPIOs = {1, 1, transmit, ~fifo_almost_empty };
+//  assign led1 = ~lock;
+//  assign led2 = ~tx_state[0];
+//  assign led3 = ~tx_state[1];
+//  assign led4 = ~transmit;
+//  assign led5 = ~o_addr[0];
+//  assign led6 = ~o_addr[1];
+//  assign led7 = ~o_addr[2];
+//  assign led8 = ~blink;
+  assign GPIO1 = 1;
+  assign GPIO2 = 1;
+  assign GPIO3 = transmit;
+  assign GPIO4 = ~blink;
 
 endmodule

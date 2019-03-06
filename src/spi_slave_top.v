@@ -188,7 +188,7 @@ module SPI_Slave_top (
   assign o_data = data;
   //assign o_data[7:0] = mosi_shift_d & {8{wr_en}};
   assign o_wr = wr_en;
-  assign o_rd = (spi_mode != 2'b10) && data_en && ~i_ssn_dd;
+  assign o_rd = ~wr_en & ~ne_ssn;
   assign o_addr = addr;
   assign o_miso = miso_d[7];
 
