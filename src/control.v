@@ -14,7 +14,8 @@ module control(
   output [7:0] o_ram_data,
   output [9:0] o_ram_addr,
   output [9:0] o_msg_length,
-  output o_transmit
+  output o_transmit,
+  output [1:0] o_reg_speed
 );
 
   wire is_ram; // is this address a ram address?
@@ -26,6 +27,7 @@ module control(
   reg i_tx_done_d;
   reg [7:0] c_data;
   reg reg_cw;
+  reg [1:0] reg_speed;
 
   assign is_ram = o_addr < 10'd1000;
 
@@ -75,6 +77,7 @@ module control(
       case (o_addr)
         10'd1000: msg_length[9:8] <= o_data[1:0];
         10'd1001: msg_length[7:0] <= o_data;
+		10'd1018: reg_speed <= o_data[1:0];
         10'd1019: reg_cw   <= o_data[0];
         10'd1023: transmit <= o_data[0];
       endcase

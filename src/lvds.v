@@ -4,53 +4,24 @@ module top(
   input cs,
   input mosi,
   input spi_clk_in,
+  input clk64mhz, // From AT86RF215
   output miso,
   output GPIO1,
   output GPIO2,
   output GPIO3,
   output GPIO4,
-//  output led5,
-//  output led6,
-//  output led7,
-//  output led8,
   output tx_a,
-  //output tx_b,
   output clk_a
-  //output clk_b
 );
 
   parameter IDLE = 2'd0;
   parameter PREPARE = 2'd1;
   parameter TRANSMIT = 2'd2;
 
-  wire clk64mhz;
   wire pll_outg;
   wire lock;
   wire clk;
-//  wire hwclk;
-//defparam OSCH_inst.NOM_FREQ = "12.09";  
-//OSCH OSCH_inst( 
-//    .STDBY(1'b0), // 0=Enabled, 1=Disabled
-//    .OSC(hwclk),
-//    .SEDSTDBY()
-//    );
-
-  // 64 MHz clock.
-  //CLKI, RST, CLKOP, LOCK
-  PLL_64MHz pll_u1 (
-    //.BYPASS(1'b0),
-    .RST(~reset_n),
-    .CLKI(hwclk),
-    .LOCK(lock),
-    .CLKOP(clk64mhz)
-  );
-
-  // Make the 64 MHz clock a net
-  //SB_GB SB_GB(
-  //  .USER_SIGNAL_TO_GLOBAL_BUFFER(pll_outg),
-  //  .GLOBAL_BUFFER_OUTPUT(clk64mhz)
-  //);
-
+ 
   reg reset;
   reg [3:0] cntr2 = 4'd0;
   reg [31:0] tx_data = 32'b0;
@@ -64,6 +35,11 @@ module top(
 
   wire read_enable, msg_done;
   reg transmit_d = 1'b0, transmit_dd;
+
+  wire [1:0] reg_speed;
+  // 0 == normal speed (e.g. sample rate = 800 KHz, every other filter output is not sent (decimated))
+  // 1 == 50 Kchip/s (e.g. sample rate = 800 KHz, all filter outputs are sent)
+  // 2 == 25 Kchip/s (e.g. sample rate = 400 KHz, all filter outputs are sent)
 
   wire transmit_pe = ~transmit_dd && transmit_d;
 
@@ -83,6 +59,13 @@ module top(
   reg tx_done_d;
   wire tx_done;
   wire tx_done_pe = tx_done & ~tx_done_d;
+
+  reg [3:0] skip_count;
+  always @(reg_speed)
+	if (reg_speed[1])
+	  skip_count = 4'd8; // (4000 / (8 + 2)) = 400 Ksps
+	else
+	  skip_count = 4'd3; // (4000 / (3 + 2)) = 800 Ksps
 
   always @(posedge clk)
     tx_done_d <= tx_done;
@@ -105,7 +88,7 @@ module top(
       if (tx_state == PREPARE)
       begin
         cntr2 <= cntr2 + 1;
-        if (cntr2 == 4'd7)
+        if (cntr2 == skip_count)
         begin
           tx_data <= {2'b10, OUTPUT_I[12:0], 1'b1, 2'b01, OUTPUT_Q[12:0], 1'b0};
           tx_state <= TRANSMIT;
@@ -155,6 +138,7 @@ module top(
   wire [7:0] ram_data, o_data;
   wire transmit, o_rd, o_wr;
   wire reg_cw; // to chose if set maximum output on I and Q or real mesage
+
   signal_gen sg0(
     .clk(clk),
     .reset(rst),
@@ -164,25 +148,13 @@ module top(
     .ram_addr(ram_addr),
     .ram_data(ram_data),
     .OUTPUT_I(sg_output_i),
-    .OUTPUT_Q(sg_output_q)
+    .OUTPUT_Q(sg_output_q),
+	.downsample(reg_speed == 2'b10)
   );
    
   assign OUTPUT_I = reg_cw ? 13'b0111111111111 : sg_output_i;
   assign OUTPUT_Q = reg_cw ? 13'b0111111111111 : sg_output_q;
-/*
-  SB_RAM1024x8 ram (
-    .RDATA(ram_data),
-    .RCLK(hwclk),
-    .RCLKE(1'b1), // always read
-    .RE(is_idle ? o_rd : read_enable),
-    .RADDR(is_idle ? o_addr : ram_addr),
-    .WCLK(hwclk),
-    .WCLKE(o_wr),
-    .WE(is_idle & o_wr),
-    .WADDR(o_addr),
-    .MASK(8'b00000000),
-    .WDATA(o_data)
-  );*/
+
   DP_RAM1024x8 sb_ram_1024x8_u1 ( 
         .Reset(~reset_n),
         .Q(ram_data), 
@@ -193,8 +165,7 @@ module top(
         .WrClockEn(o_wr), 
         .WE(is_idle & o_wr),
         .WrAddress(o_addr),
-        .Data(o_data) 
-            );
+        .Data(o_data));
 
   control ctrl(
     .clk(hwclk),
@@ -211,27 +182,15 @@ module top(
     .o_ram_data(o_data),
     .o_msg_length(msg_length),
     .o_transmit(transmit),
-    .o_reg_cw(reg_cw)
+    .o_reg_cw(reg_cw),
+	.o_reg_speed(reg_speed)
   );
 
 
   wire spi_miso;
-
-/*
-  SB_IO #(
-      .PIN_TYPE(6'b 1010_01),
-      .PULLUP(1'b0)
-  ) io_block_instance (
-      .PACKAGE_PIN(miso),
-      .OUTPUT_ENABLE(~cs),
-      .D_OUT_0(spi_miso),
-      .D_IN_0(din)
-  );*/
-
   wire rst;
   
   assign miso = ~cs ? spi_miso : 'bz;
-
   assign rst = (tx_state == IDLE);
 
   reg [31:0] cntr3 = 0;
@@ -247,14 +206,6 @@ module top(
       end
   end
 
-//  assign led1 = ~lock;
-//  assign led2 = ~tx_state[0];
-//  assign led3 = ~tx_state[1];
-//  assign led4 = ~transmit;
-//  assign led5 = ~o_addr[0];
-//  assign led6 = ~o_addr[1];
-//  assign led7 = ~o_addr[2];
-//  assign led8 = ~blink;
   assign GPIO1 = 1;
   assign GPIO2 = 1;
   assign GPIO3 = transmit;

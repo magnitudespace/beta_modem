@@ -3,6 +3,7 @@ module signal_gen(
   input reset,
   input enable,
   input [7:0] ram_data,
+  input downsample,
   output done,
   output [9:0] ram_addr,
   output read_enable,
@@ -17,6 +18,7 @@ module signal_gen(
 
   // Outputs
   wire data_valid, eof;
+  wire transmit_sample;
 
   reg [3:0] state;
   reg [4:0] filter_stage = 5'b0000;//one bit more for 8 t over sampling
@@ -133,7 +135,8 @@ module signal_gen(
     .OUTPUT_Q(OUTPUT_Q)
   );
 
-  assign valid = (state == TRANSMIT);
+  assign transmit_sample = (filter_stage[0] || ~downsample);
+  assign valid = (state == TRANSMIT && transmit_sample);
   assign done = (state == DONE);
 
 endmodule
