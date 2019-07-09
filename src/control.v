@@ -15,7 +15,10 @@ module control(
   output [9:0] o_ram_addr,
   output [9:0] o_msg_length,
   output o_transmit,
-  output [1:0] o_reg_speed
+  output [1:0] o_reg_speed,
+  output o_reg_use_fifo,
+  output o_reg_oqpsk,
+  output o_fifo_reset
 );
 
   wire is_ram; // is this address a ram address?
@@ -27,7 +30,10 @@ module control(
   reg i_tx_done_d;
   reg [7:0] c_data;
   reg reg_cw;
+  reg reg_use_fifo;
   reg [1:0] reg_speed;
+  reg reg_oqpsk;
+  reg fifo_reset;
 
   assign is_ram = o_addr < 10'd1000;
 
@@ -78,7 +84,7 @@ module control(
         10'd1000: msg_length[9:8] <= o_data[1:0];
         10'd1001: msg_length[7:0] <= o_data;
 		10'd1018: reg_speed <= o_data[1:0];
-        10'd1019: reg_cw   <= o_data[0];
+        10'd1019: {fifo_reset, reg_oqpsk, reg_use_fifo, reg_cw} <= o_data[2:0];
         10'd1023: transmit <= o_data[0];
       endcase
     end
@@ -106,5 +112,9 @@ module control(
   assign o_transmit = transmit;
   assign o_msg_length = msg_length;
   assign o_reg_cw = reg_cw;
+  assign o_reg_speed = reg_speed;
+  assign o_reg_use_fifo = reg_use_fifo;
+  assign o_reg_oqpsk = reg_oqpsk;
+  assign o_fifo_reset = fifo_reset;
 
 endmodule

@@ -6,88 +6,7 @@
 -->
 </STYLE>
 </HEAD>
-<PRE><A name="pn171205143014"></A><B><U><big>pn171205143014</big></U></B>
-#Start recording tcl command: 12/4/2017 15:14:23
-#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
-prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Jedecgen
-prj_src add "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
-prj_src exclude "C:/NVProjects/latticeproj/beta_modem/src/filter.v"
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Bitgen
-prj_src exclude "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
-prj_src enable "C:/NVProjects/latticeproj/beta_modem/src/filter8.v"
-prj_run Export -impl impl1 -task Bitgen
-prj_run Synthesis -impl impl1 -task Lattice_Synthesis
-prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/PLL_64/PLL_64MHz.v"
-prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/RAM_1024x8/DP_RAM1024x8.v"
-prj_src add "C:/NVProjects/latticeproj/beta_modem/IPs/DDR_OUTPUT/DDR_TRANSMIT.v"
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Jedecgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Jedecgen
-pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_src add -exclude "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_src enable "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_run Export -impl impl1 -task Jedecgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Jedecgen
-pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_run Export -impl impl1 -task Jedecgen
-prj_run Export -impl impl1 -task Bitgen
-prj_run Export -impl impl1 -task Jedecgen
-pgr_project save "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_project save
-prj_project close
-#Stop recording: 12/5/2017 14:30:14
-
-
-
-<A name="pn171207122320"></A><B><U><big>pn171207122320</big></U></B>
-#Start recording tcl command: 12/7/2017 12:03:27
-#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
-prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
-pgr_project open "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_project close
-#Stop recording: 12/7/2017 12:23:20
-
-
-
-<A name="pn171211150039"></A><B><U><big>pn171211150039</big></U></B>
-#Start recording tcl command: 12/11/2017 14:00:57
-#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
-prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
-pgr_project close
-prj_run Export -impl impl1 -task Bitgen
-pgr_project open "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_project close
-#Stop recording: 12/11/2017 15:00:39
-
-
-
-<A name="pn171211164941"></A><B><U><big>pn171211164941</big></U></B>
-#Start recording tcl command: 12/11/2017 16:09:55
-#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
-prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
-prj_run Export -impl impl1 -task Jedecgen
-pgr_project open "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_project close
-#Stop recording: 12/11/2017 16:49:41
-
-
-
-<A name="pn180206142531"></A><B><U><big>pn180206142531</big></U></B>
-#Start recording tcl command: 2/6/2018 14:21:19
-#Project Location: /home/jens/Downloads/beta_modem; Project name: beta_modem
-prj_project open "/home/jens/Downloads/beta_modem/beta_modem.ldf"
-prj_run Export -impl impl1 -task Bitgen
-#Stop recording: 2/6/2018 14:25:31
-
-
-
-<A name="pn180720151059"></A><B><U><big>pn180720151059</big></U></B>
+<PRE><A name="pn180720151059"></A><B><U><big>pn180720151059</big></U></B>
 #Start recording tcl command: 7/20/2018 14:47:08
 #Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
 prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
@@ -123,6 +42,89 @@ prj_project saveas -name "cn2_alpha" -dir "/home/jens/ms/beta_modem/cn2"
 prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
 prj_project close
 #Stop recording: 2/28/2019 14:14:14
+
+
+
+<A name="pn190306170421"></A><B><U><big>pn190306170421</big></U></B>
+#Start recording tcl command: 3/6/2019 11:29:11
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+prj_src add "/home/jens/ms/beta_modem/cn2/data_fifo.v"
+prj_src exclude "/home/jens/ms/beta_modem/cn2/data_fifo.v"
+prj_src add "/home/jens/ms/beta_modem/DDR_RECEIVE.v"
+prj_src enable "/home/jens/ms/beta_modem/cn2/data_fifo.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_src exclude "/home/jens/ms/beta_modem/DDR_RECEIVE.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_src enable "/home/jens/ms/beta_modem/DDR_RECEIVE.v"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 3/6/2019 17:04:21
+
+
+
+<A name="pn190321170451"></A><B><U><big>pn190321170451</big></U></B>
+#Start recording tcl command: 3/21/2019 13:11:21
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 3/21/2019 17:04:51
+
+
+
+<A name="pn190404125959"></A><B><U><big>pn190404125959</big></U></B>
+#Start recording tcl command: 4/4/2019 12:26:47
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+#Stop recording: 4/4/2019 12:59:59
+
+
+
+<A name="pn190408085236"></A><B><U><big>pn190408085236</big></U></B>
+#Start recording tcl command: 4/3/2019 22:18:46
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+prj_run Export -impl impl1 -task Bitgen
+#Stop recording: 4/8/2019 08:52:36
+
+
+
+<A name="pn190704162847"></A><B><U><big>pn190704162847</big></U></B>
+#Start recording tcl command: 7/4/2019 14:59:28
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+prj_run Export -impl impl1 -task Jedecgen
+#Stop recording: 7/4/2019 16:28:47
+
+
+
+<A name="pn190704170025"></A><B><U><big>pn190704170025</big></U></B>
+#Start recording tcl command: 7/4/2019 17:00:15
+#Project Location: /home/jens/ms/beta_modem; Project name: beta_modem
+prj_project open "/home/jens/ms/beta_modem/beta_modem.ldf"
+#Stop recording: 7/4/2019 17:00:25
 
 
 

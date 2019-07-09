@@ -4,7 +4,8 @@ module top(
   input cs,
   input mosi,
   input spi_clk_in,
-  input clk64mhz, // From AT86RF215
+  input clk64mhz, // From AT86RF215 LVDS
+  input rx_in,
   output miso,
   output GPIO1,
   output GPIO2,
@@ -32,6 +33,8 @@ module top(
   wire [12:0] OUTPUT_Q;
   wire [12:0] sg_output_i;
   wire [12:0] sg_output_q;
+
+  wire [31:0] fifo_out;
 
   wire read_enable, msg_done;
   reg transmit_d = 1'b0, transmit_dd;
@@ -87,7 +90,7 @@ module top(
       end
       if (tx_state == PREPARE)
       begin
-        cntr2 <= cntr2 + 1;
+        cntr2 <= cntr2 + 4'd1;
         if (cntr2 == skip_count)
         begin
           tx_data <= {2'b10, OUTPUT_I[12:0], 1'b1, 2'b01, OUTPUT_Q[12:0], 1'b0};
@@ -125,19 +128,34 @@ module top(
   lvds_trx trx(
     .tx_data(tx_data),
     .enable(1'b1),
-    .clk64mhz(clk64mhz),
+    .clk64mhz(s_rx_ck),
     .tx_done (tx_done),
     .tx_a(tx_a),
-    //.tx_b(tx_b),
     .clk_a(clk_a),
-    //.clk_b(clk_b),
     .slowclk(clk)
   );
 
   wire [9:0] ram_addr, o_addr;
   wire [7:0] ram_data, o_data;
+  reg  [7:0] fifo_data;
+  wire [7:0] ram_or_fifo;
+  wire [3:0] GPIOs;
+
   wire transmit, o_rd, o_wr;
   wire reg_cw; // to chose if set maximum output on I and Q or real mesage
+  wire reg_use_fifo;
+  wire reg_oqpsk;
+
+  // [ 31:24,  23:16,   15:8,    7:0]
+  // [byte 0, byte 1, byte 2, byte 3]
+  always @(posedge hwclk)
+  begin
+	fifo_data <= (o_addr[1:0] == 2'd0) ? fifo_out[31:24] : (
+		(o_addr[1:0] == 2'd1) ? fifo_out[23:16] : (
+		(o_addr[1:0] == 2'd2) ? fifo_out[15:8] : fifo_out[7:0]));
+  end
+
+  assign ram_or_fifo = reg_use_fifo ? fifo_data : ram_data;
 
   signal_gen sg0(
     .clk(clk),
@@ -149,7 +167,8 @@ module top(
     .ram_data(ram_data),
     .OUTPUT_I(sg_output_i),
     .OUTPUT_Q(sg_output_q),
-	.downsample(reg_speed == 2'b10)
+	.downsample(reg_speed == 2'b00),
+	.oqpsk(reg_oqpsk)
   );
    
   assign OUTPUT_I = reg_cw ? 13'b0111111111111 : sg_output_i;
@@ -173,42 +192,83 @@ module top(
     .i_mosi(mosi),
     .i_ssn(cs),
     .i_sclk(spi_clk_in),
+	.i_gpios(GPIOs),
     .o_miso(spi_miso),
     .o_rd(o_rd),
     .o_wr(o_wr),
     .i_tx_done(msg_done_d),
-    .i_ram_data(ram_data),
+    .i_ram_data(ram_or_fifo),
     .o_ram_addr(o_addr),
     .o_ram_data(o_data),
     .o_msg_length(msg_length),
     .o_transmit(transmit),
     .o_reg_cw(reg_cw),
-	.o_reg_speed(reg_speed)
+	.o_reg_speed(reg_speed),
+	.o_reg_use_fifo(reg_use_fifo),
+	.o_reg_oqpsk(reg_oqpsk),
+	.o_fifo_reset(fifo_reset)
   );
-
 
   wire spi_miso;
   wire rst;
+
+  reg fifo_write;
+  reg [1:0] valid_cntr;
+  reg [31:0] rx_data;
+  reg [31:0] valid_data;
+  reg [3:0] sync_cnt;
+  reg valid;
+  wire [1:0] s_rx_d;
+  wire s_rx_ck, sync, all_zero, fifo_reset;
+  reg fifo_read;
   
-  assign miso = ~cs ? spi_miso : 'bz;
+  DDR_RECEIVE ddr_recv(clk64mhz, ~reset_n, s_rx_ck, rx_in, s_rx_d);
+
+  assign sync = (rx_data[31:30] == 2'b10) && (rx_data[15:14] == 2'b01);
+  assign all_zero = (rx_data[31:0] == 32'b0);
+
+  always @(posedge hwclk)
+	fifo_read <= (o_rd && o_addr[1:0] == 2'd3);
+
+  always @(posedge s_rx_ck)
+	rx_data <= {rx_data[29:0], s_rx_d[0], s_rx_d[1]};
+
+  always @(posedge s_rx_ck)
+  begin
+	sync_cnt <= sync_cnt + 4'd1;
+	valid <= 1'b0;
+	if (all_zero)
+	  sync_cnt <= 4'd0;
+	else if (sync_cnt == 4'd15 && sync)
+	begin
+	  valid <= 1'b1;
+	  valid_data <= rx_data;
+	end
+  end
+
+  wire fifo_almost_empty;
+
+  data_fifo df(
+	.Data(valid_data),
+	.WrClock(s_rx_ck),
+	.RdClock(hwclk),
+	.WrEn(valid),
+	.RdEn(fifo_read),
+	.Reset(fifo_reset),
+	.RPReset(~reset_n),
+	.AlmostEmpty(fifo_almost_empty),
+	.Q(fifo_out));
+
+  assign miso = ~cs ? spi_miso : 1'bz;
   assign rst = (tx_state == IDLE);
 
   reg [31:0] cntr3 = 0;
-  reg blink = 0;
-
-  always @(posedge clk64mhz)
-  begin
-	  cntr3 <= cntr3 + 1;
-	  if (cntr3 == 32'd32000000)
-      begin
-		  cntr3 <= 0;
-		  blink <= ~blink;
-      end
-  end
 
   assign GPIO1 = 1;
   assign GPIO2 = 1;
   assign GPIO3 = transmit;
-  assign GPIO4 = ~blink;
+  assign GPIO4 = ~fifo_almost_empty;
+  
+  assign GPIOs = {1'b1, 1'b1, transmit, ~fifo_almost_empty };
 
 endmodule

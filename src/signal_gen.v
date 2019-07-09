@@ -4,6 +4,7 @@ module signal_gen(
   input enable,
   input [7:0] ram_data,
   input downsample,
+  input oqpsk,
   output done,
   output [9:0] ram_addr,
   output read_enable,
@@ -15,10 +16,10 @@ module signal_gen(
   // Inputs
   reg [15:0] msg_length = 16'd2119; // x2 bits
   wire [3:0] data;
+  wire [12:0] out_q;
 
   // Outputs
   wire data_valid, eof;
-  wire transmit_sample;
 
   reg [3:0] state;
   reg [4:0] filter_stage = 5'b0000;//one bit more for 8 t over sampling
@@ -34,6 +35,9 @@ module signal_gen(
   parameter FILTER_Q1 = 4'd7;
   parameter TRANSMIT = 4'd8;
   parameter DONE = 4'd9;
+
+  reg [12:0] q_fifo [7:0];
+  integer index;
 
   always @ (posedge clk) begin
     if (reset)
@@ -82,12 +86,16 @@ module signal_gen(
       if (state == FILTER_Q1)
       begin
         state <= TRANSMIT;
+		for (index=1; index<8; index=index+1) begin
+          q_fifo[index] <= q_fifo[index-1];
+        end
+		q_fifo[0] <= out_q;
       end
       if (state == TRANSMIT && enable)
       begin
-        if (filter_stage != 5'b11111)
+        if (filter_stage != (downsample ? 5'b11101 : 5'b11111))
         begin
-          filter_stage <= filter_stage + 1;
+          filter_stage <= filter_stage + (downsample ? 5'd3 : 5'd1);
           state <= FILTER_I;
         end else begin
           state <= LOAD;
@@ -135,8 +143,8 @@ module signal_gen(
     .OUTPUT_Q(OUTPUT_Q)
   );
 
-  assign transmit_sample = (filter_stage[0] || ~downsample);
-  assign valid = (state == TRANSMIT && transmit_sample);
+  // assign OUTPUT_Q = q_fifo[(oqpsk && !downsample) ? 3'd7 : 0];
+  assign valid = (state == TRANSMIT);
   assign done = (state == DONE);
 
 endmodule

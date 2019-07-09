@@ -1,8 +1,0 @@
-#Start recording tcl command: 12/11/2017 14:00:57
-#Project Location: C:/NVProjects/latticeproj/beta_modem; Project name: beta_modem
-prj_project open "C:/NVProjects/latticeproj/beta_modem/beta_modem.ldf"
-pgr_project close
-prj_run Export -impl impl1 -task Bitgen
-pgr_project open "C:/NVProjects/latticeproj/beta_modem/impl1/impl1.xcf"
-prj_project close
-#Stop recording: 12/11/2017 15:00:39

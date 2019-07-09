@@ -36,7 +36,7 @@
         <Source name="src/filter8.v" type="Verilog" type_short="Verilog" excluded="TRUE">
             <Options/>
         </Source>
-        <Source name="IPs/PLL_64/PLL_64MHz.v" type="Verilog" type_short="Verilog">
+        <Source name="IPs/PLL_64/PLL_64MHz.v" type="Verilog" type_short="Verilog" excluded="TRUE">
             <Options/>
         </Source>
         <Source name="IPs/RAM_1024x8/DP_RAM1024x8.v" type="Verilog" type_short="Verilog">
@@ -46,6 +46,12 @@
             <Options/>
         </Source>
         <Source name="filter16.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="cn2/data_fifo.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="DDR_RECEIVE.v" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
         <Source name="beta_modem.lpf" type="Logic Preference" type_short="LPF">
