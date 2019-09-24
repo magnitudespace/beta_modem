@@ -246,7 +246,7 @@ module top(
 	end
   end
 
-  wire fifo_almost_empty;
+  wire fifo_full;
 
   data_fifo df(
 	.Data(valid_data),
@@ -256,7 +256,7 @@ module top(
 	.RdEn(fifo_read),
 	.Reset(fifo_reset),
 	.RPReset(~reset_n),
-	.AlmostEmpty(fifo_almost_empty),
+	.Full(fifo_full),
 	.Q(fifo_out));
 
   assign miso = ~cs ? spi_miso : 1'bz;
@@ -267,8 +267,8 @@ module top(
   assign GPIO1 = 1;
   assign GPIO2 = 1;
   assign GPIO3 = transmit;
-  assign GPIO4 = ~fifo_almost_empty;
+  assign GPIO4 = fifo_full;
   
-  assign GPIOs = {1'b1, 1'b1, transmit, ~fifo_almost_empty };
+  assign GPIOs = {1'b1, 1'b1, transmit, fifo_full };
 
 endmodule

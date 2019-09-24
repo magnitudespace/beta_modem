@@ -75,17 +75,17 @@ module generator(
         end else if (data_cntr == msg_length) begin
           state <= PAD_AFTER;
           pad_cntr <= 0;
-        end else if (data_cntr[2:0] == 3'b111) begin
+        end else if (data_cntr[2:0] == 3'b111) begin // insert one pilot symbol for every 8 normal symbols
           state <= DATA_EXTRA;
           data_cntr <= data_cntr + 1;
-        end else if (data_cntr[2:0] == 3'b011) begin
+        end else if (data_cntr[2:0] == 3'b011) begin // we count in pairs of 2 bits, thus this is 1 byte
           state <= LOAD;
           data_cntr <= data_cntr + 1;
         end else begin
           data_cntr <= data_cntr + 1;
         end
       end
-      if (state == DATA_EXTRA)
+      if (state == DATA_EXTRA) // this adds the pilot symbols
       begin
         spread_cntr <= spread_cntr + 1;
         if (spread_cntr == 15)
@@ -108,6 +108,7 @@ module generator(
     end
     if (state == LOAD)
     begin
+	  // one state to load the data
       state <= DATA;
       spread_cntr <= 0;
     end
